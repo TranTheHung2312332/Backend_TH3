@@ -9,7 +9,7 @@ router.post("/", async (request, response) => {
 
 router.get("/photosOfUser/:id", async (request, response) => {
     const userId = request.params.id
-    const photos = await Photo.find({user_id: userId}, '_id user_id file_name date_time comments')
+    const photos = await Photo.find({user_id: userId}, '_id user_id file_name date_time comments').lean()
 
     if(photos){
         for(const photo of photos){
@@ -21,12 +21,12 @@ router.get("/photosOfUser/:id", async (request, response) => {
                     last_name: user.last_name
                 }
             }
-            // photo.comments = photo.comments.map(item => ({
-            //     comment: item.comment,
-            //     date_time: item.date_time,
-            //     _id: item._id,
-            //     user: item.user
-            // }))
+            photo.comments = photo.comments.map(item => ({
+                comment: item.comment,
+                date_time: item.date_time,
+                _id: item._id,
+                user: item.user
+            }))
         }        
 
         response.status(200).json({
